@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title></title>
+		<style type="text/css">
+			*{padding: 0px;margin: 0px;}
+			#fileBlock{margin: 150px 500px;}
+			#file{width: 150px;height: 60px;display: none;}
+			#btn{width: 150px;height: 60px;}
+			#frm{display: none;}
+			.moniFile{width: 150px;height: 60px;background: #00FFFF;}
+		</style>
+	</head>
+	<body>
+		<div id="fileBlock">
+		<iframe name="fileIframe" id="fileIframe" style="display: none;"></iframe>
+			<form action="index.php" enctype="multipart/form-data" method="post" target="fileIframe" class="frm" id="frm">
+				<input type="file" name="file" id="file"/>
+				<input type="submit" style="display: none" value="上传文件" id="subBatchUploadBtn"/>
+			</form>
+			<input type="button" value="上传文件" id="moniFile"/>
+	</div>
+		<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				var btn = $('#btn'),
+					file = $('#file'),
+					display = $('#display'),
+					progress = $('#progress'),
+					moniFile = $('#moniFile'),
+					frm = $('#frm'),
+					subBatchUploadBtn = $('#subBatchUploadBtn'),  // iframe file文件上传 way2
+					fileIframe = $('#fileIframe');   
+					
+			// iframe file文件上传 way2
+			fileIframe.on('load',function(){
+			  // var responseText = fileIframe[0].contentWindow.document;
+				var responseText = document.getElementById('fileIframe').contentWindow.document;
+			  var responseData = $.parseJSON(responseText) || {};
+				if (responseData.isSuccess == true || responseData.code == 200) {
+					alert("success");
+					frm[0].reset(); 
+				} else {
+					alert("fail");
+					frm[0].reset(); 
+				}
+			});
+			file.on('change',function(e){
+				var upfile = $(this).val();				
+				var arr = ['jpg','png','bmp','gif'].join(",");
+				var upfileName = upfile.substring(upfile.lastIndexOf('\\',upfile.length - 1) + 1);
+				if(upfileName.indexOf('.') != -1){
+					if(arr.indexOf(upfileName.substring(upfileName.lastIndexOf('.') + 1)) != -1){
+					subBatchUploadBtn.click(); // way2
+				}else{
+						alert("抱歉，仅允许上传图片格式文件");
+					}
+				}else{
+					alert("抱歉，仅允许上传图片格式文件");
+				}
+			});
+			
+			// 为样式兼容，模拟file元素
+			moniFile.on('click',function(){
+				file.click();
+			});
+		});
+		</script>
+	</body>
+</html>
+			
+			
+			
+			
