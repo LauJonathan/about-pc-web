@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title></title>
+		<style type="text/css">
+			*{padding: 0px;margin: 0px;}
+			#fileBlock{margin: 150px 500px;}
+			#file{width: 150px;height: 60px;display: none;}
+			#btn{width: 150px;height: 60px;}
+			#frm{display: none;}
+			.moniFile{width: 150px;height: 60px;background: #00FFFF;}
+		</style>
+	</head>
+	<body>
+		<div id="fileBlock">
+			<!--way1 newData-->
+			<form id="frm">
+				<input type="file" value="上传文件" id="file"/><br />
+			</form>
+			<div class="moniFile" id="moniFile"></div>
+			<p id="display">this:</p>
+			<div class="progress" id="progress"></div>
+			
+			<!--<form action="index.php" method="post" id="frm">
+				<input type="file" value="上传文件" id="file"/><br />
+				<input type="submit" value="提交" name="" id="btn" />
+				<p id="display">this:</p>
+				<div class="progress" id="progress"></div>
+				<input type="submit" value="提交" name="" id="btn" />
+			</form>-->
+		</div>
+		<script type="text/javascript" src="js/jquery-1.7.1.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				var btn = $('#btn'),
+					file = $('#file'),
+					display = $('#display'),
+					progress = $('#progress'),
+					moniFile = $('#moniFile'),
+					frm = $('#frm');
+				
+				// way1 formData   form标签或者new formData();    ie10+支持
+				function requestTxt(){
+					var fd = new FormData();
+						fd.append('file',document.getElementById('file').files[0]);
+					var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+					xhr.upload.addEventListener("progress", function(evt){
+			            if (evt.lengthComputable) {
+			                var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+			                document.getElementById("progress").innerHTML = '上传中'+percentComplete+"%";
+			            }else {
+			                document.getElementById("progress").innerHTML = '无法计算上传进度';
+			            }
+			        }, false);
+			        xhr.onload = function () {
+			        	if(xhr.status == 200){
+ 							// $.parseJSON(xhr.responseText);
+// 							file.val("");    // 同名上传文件解决,chrome,firefox ,ie 11+有效   
+   							frm[0].reset();  // 同名上传文件解决,chrome,firefox ,ie 10+有效  ,对id为frm元素第一个form执行reset( 仅当一个form元素时，如有多个可用each遍历执行reset, $("form").each(function(){ this.reset(); }); )
+// 							document.getElementById('frm').reset();   // 与frm[0].reset()等同
+ 							alert("success");
+ 						}else{
+// 							file.val("");    // 需要在change处判断空return
+   							frm[0].reset(); 
+//							document.getElementById('frm').reset();
+ 							alert("fail");
+ 						}
+	 				};
+					xhr.open('post','index.php',true);
+					xhr.send(fd);
+				
+			};
+			
+			file.on('change',function(e){
+				var upfile = $(this).val();				
+//				if(!upfile){   // 完成如果有file.val("");应添加这个
+//					return;
+//				}
+				var arr = ['jpg','png','bmp','gif'];
+				var upfileName = upfile.substring(upfile.lastIndexOf('\\',upfile.length - 1) + 1);
+				if(upfileName.indexOf('.') != -1){
+					if(arr.indexOf(upfileName.substring(upfileName.lastIndexOf('.') + 1)) != -1){
+						requestTxt();
+						// 上传+进度
+					}else{
+						alert("抱歉，仅允许上传图片格式文件");
+					}
+				}else{
+					alert("抱歉，仅允许上传图片格式文件");
+				}
+			});
+			
+			// 为样式兼容，模拟file元素
+			moniFile.on('click',function(){
+				file.click();
+			});
+		});
+		</script>
+	</body>
+</html>
