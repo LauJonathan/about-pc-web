@@ -1,0 +1,161 @@
+<iframe src="" width="0" height="0" style="display: none" name="fileIframe" id="fileIframe"></iframe>
+<form action="index.php" method="post" enctype="multipart/form-data" target="fileIframe" class="fileForm" id="fileForm">
+	<input name="freceiptamount" type="hidden" id="hiddenMoney" value=""/>
+	<input name="fdate" type="hidden" id="hiddenDate" value=""/>
+  <input name="fenterprisename" type="hidden" id="hiddenEnterprise"  value=""/>
+	<input name="fdecription" type="hidden" id="hiddenDescription"  value=""/>
+	<input type="file" name="image" class="uploadPaperInvoiceFile" id="uploadPaperInvoiceFile"/>
+	<input type="submit" id="submit" />
+</form>
+<label>上传纸质发票：</label><input type="text" class="uploadPaperInvoiceTxt" id="uploadPaperInvoiceTxt"/>
+<input type="button" class="uploadPaperInvoiceFileBtn" id="uploadPaperInvoiceFileBtn" value="上传"/>
+
+// 渲染图片
+<div class="uploadPaperInvoiceDisplay" id="uploadPaperInvoiceDisplay">
+	<img src="" id="imgDisplay" alt="" />
+</div>
+
+// 录入内容
+<div class="uploadPaperInvoiceDetails">
+	<p><label for="openInvoiceMoney"><span class="redPoint">*</span>开票金额：</label><input name="openInvoiceMoney" type="text" class="openInvoiceMoney" id="openInvoiceMoney"/></p>
+	<p><label for="openInvoiceDate"><span class="redPoint">*</span>开票日期：</label><input name="openInvoiceDate" type="text" class="openInvoiceDate" id="openInvoiceDate" data-s="" readonly="readonly"/></p>
+	<p><label for="openInvoicer">开票方：</label><input type="text" name="openInvoicer" class="openInvoicer" id="openInvoicer" /></p>
+	<p><label for="openInvoiceRemark">备注：</label><input type="text" name="openInvoiceRemark" class="openInvoiceRemark" id="openInvoiceRemark"/></p>
+</div>
+<div class="uploadPaperInvoiceOperate">
+	<input type="button" value="确定" class="uploadPaperInvoiceOperateBtn" id="uploadPaperInvoiceOperateBtn"/>
+</div>
+// 将最后数据塞入input隐藏域中，传给form，知道iframe的name,submit点击后提交
+
+// iframe响应
+var fileIframe = document.getElementById('fileIframe');
+    fileIframe.onload = function () {
+	    var responseText = document.getElementById('fileIframe').contentWindow.document.body.innerText;   // 获取响应内容
+    	var responseData = $.parseJSON(responseText) || {};
+    	if (responseData.errcode == "0000") {
+  //		console.log("success");
+    		updateDisplayPaper(responseData.data);
+    		uploadPaperInvoicePanel.click();
+    		uploadPaperInvoiceTxt.val("");
+    		$('#fileForm')[0].reset(); 
+  	//success
+  	  } else {
+  //		console.log("fail");
+    		uploadPaperInvoiceTxt.val("");
+    		$('#fileForm')[0].reset();    // 重置表单，（解决上传同名文件问题）
+	  //error 
+	    }
+    };
+
+// 本地预览图片全路径获取
+		function getFullPath(){     // $('#imgDisplay')
+			var file = document.getElementById('uploadPaperInvoiceFile');
+			var obj = file.files && file.files[0];   // ie10+ chrome firefox
+			if (!!window.ActiveXObject || "ActiveXObject" in window || window.navigator.userAgent.indexOf("Firefox") > -1 || window.navigator.userAgent.indexOf('Chrome') > -1 ) {  
+				if(obj){    
+					var reader = new FileReader();  
+					reader.onload = function(evt){  
+						$('#imgDisplay').attr('src',evt.target.result);
+					};    
+					reader.readAsDataURL(obj); 
+				}else{   // ie6-9预览图片处理
+					$('#uploadPaperInvoiceDisplay').html('<img id="imgDisplay" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src=\'' + file.value + '\'" />');
+				}
+			}
+		  //	!!window.ActiveXObject || "ActiveXObject" in window  判断为ie浏览器
+		}
+		
+	uploadPaperInvoiceFile.on('change',function(){
+		var upfile = $(this).val();				
+		if(!upfile){
+			return;
+		}
+		var upfileName = upfile.substring(upfile.lastIndexOf('\\',upfile.length - 1) + 1);
+		if(upfileName.indexOf('.') != -1){
+			if(upfileName.substring(upfileName.lastIndexOf('.') + 1) == "png" || upfileName.substring(upfileName.lastIndexOf('.') + 1) == "jpg"){
+				uploadPaperInvoiceTxt.val(upfileName);
+				getFullPath();  //获取全路径
+				uploadPaperInvoiceDisplay.show();
+				uploadPaperInvoice.addClass('open');
+			}else{
+				layer.alert("抱歉，仅允许上传图片格式文件");
+			}
+		}else{
+			layer.alert("抱歉，仅允许上传图片格式文件");
+		}
+	});
+	
+	function checkUploadParam(){
+		var money = '',openDate = '',receiver = '',remark = '';
+		var param = {};
+		money = openInvoiceMoney.val().trim();
+		openDate = openInvoiceDate.val();
+		receiver = openInvoicer.val().trim();
+		remark = openInvoiceRemark.val().trim();
+		if(!money){
+			layer.msg("开票金额不允许为空",{time: 1400});
+			return false;
+		}else{
+			if((+money !== +money) || (+money) < 0){
+				layer.msg("抱歉，输入金额格式有误",{time: 1400});
+				return false;
+			}
+		}
+		if(!openDate){
+			layer.msg("开票日期不允许为空",{time: 1400});
+			return false;
+		}
+		param.je = money;
+		param.kprq = openDate;
+		param.kpf = receiver || "";
+		param.beizhu = remark || "";
+		$('#hiddenMoney').val(money);    //塞入隐藏域
+		$('#hiddenDate').val(openDate);
+		$('#hiddenEnterprise').val(receiver);
+		$('#hiddenDescription').val(remark);
+		return param;
+	}
+	
+	$('#submit').on('click',function(){
+	});
+	
+	uploadPaperInvoiceOperateBtn.on('click',function(){
+		if(!checkUploadParam()){
+			return;
+		}           
+		if(uploadPaperInvoiceFile.val() == ""){
+			layer.msg("抱歉，您还未上传纸质发票图片",{time: 1400});
+			return;
+		}
+		var confirm = layer.confirm('是否确认上传纸票信息？', {
+            btn: ['确认','取消']  //按钮
+        }, function(){
+//					     	var param = checkUploadParam();    // +括号参数
+//								uploadRequest(param);                      // 图片上传
+    			$('#submit').click();
+    			layer.close(confirm);
+      });
+		
+	});						
+	
+	uploadPaperInvoiceFileBtn.on('click',function(){
+		uploadPaperInvoiceFile.click();
+	});
+	
+	function cleanUploadPaper(){
+		uploadPaperInvoiceTxt.val("");
+		$('#fileForm')[0].reset(); 
+		$('#imgDisplay').attr('src','');
+		uploadPaperInvoiceDisplay.hide();
+		uploadPaperInvoice.removeClass('open');
+	}
+	
+	uploadPaperInvoicePanel.on('click',function(e){
+		var curr = $(this);
+		if(e.target.className != "closePanel" && e.target.className != "uploadPaperInvoicePanel"){
+			return;
+		}
+		curr.hide();
+		cleanUploadPaper();
+	});
+
