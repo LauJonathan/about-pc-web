@@ -30,7 +30,7 @@
 // iframe响应
 var fileIframe = document.getElementById('fileIframe');
     fileIframe.onload = function () {
-	    var responseText = document.getElementById('fileIframe').contentWindow.document.body.innerText;   // 获取响应内容
+	var responseText = document.getElementById('fileIframe').contentWindow.document.body.innerText;   // 获取响应内容
     	var responseData = $.parseJSON(responseText) || {};
     	if (responseData.errcode == "0000") {
   //		console.log("success");
@@ -39,12 +39,12 @@ var fileIframe = document.getElementById('fileIframe');
     		uploadPaperInvoiceTxt.val("");
     		$('#fileForm')[0].reset(); 
   	//success
-  	  } else {
+  	  }else{
   //		console.log("fail");
     		uploadPaperInvoiceTxt.val("");
     		$('#fileForm')[0].reset();    // 重置表单，（解决上传同名文件问题）
 	  //error 
-	    }
+	  }
     };
 
 // 本地预览图片全路径获取
@@ -72,18 +72,20 @@ var fileIframe = document.getElementById('fileIframe');
 		}
 		var upfileName = upfile.substring(upfile.lastIndexOf('\\',upfile.length - 1) + 1);
 		if(upfileName.indexOf('.') != -1){
-		  if(upfileName.substring(upfileName.lastIndexOf('.') + 1) == "png" || upfileName.substring(upfileName.lastIndexOf('.') + 1) == "jpg"){
-		    uploadPaperInvoiceTxt.val(upfileName);
-		    getFullPath();  //获取全路径
-		    uploadPaperInvoiceDisplay.show();
-		    uploadPaperInvoice.addClass('open');
+		  var reg = /^(png|jpg|gif|bmp)$/;
+		 // if(upfileName.substring(upfileName.lastIndexOf('.') + 1) == "png" || upfileName.substring(upfileName.lastIndexOf('.') + 1) == "jpg"){
+		  if(reg.test(upfileName.substring(upfileName.lastIndexOf('.')+1))){ 
+		     uploadPaperInvoiceTxt.val(upfileName);
+		     getFullPath();  //获取全路径
+		     uploadPaperInvoiceDisplay.show();
+		     uploadPaperInvoice.addClass('open');
 	          }else{
-		    layer.alert("抱歉，仅允许上传图片格式文件");
-		    $('#fileForm')[0].reset(); 
+		     layer.alert("抱歉，仅允许上传图片格式文件");
+		     $('#fileForm')[0].reset(); 
 		  }
 		}else{
-		  layer.alert("抱歉，仅允许上传图片格式文件");
-		  $('#fileForm')[0].reset();
+		   layer.alert("抱歉，仅允许上传图片格式文件");
+		   $('#fileForm')[0].reset();
 		}
 	});
 	
@@ -122,42 +124,42 @@ var fileIframe = document.getElementById('fileIframe');
 	});
 	
 	uploadPaperInvoiceOperateBtn.on('click',function(){
-		if(!checkUploadParam()){
-			return;
-		}           
-		if(uploadPaperInvoiceFile.val() == ""){
-			layer.msg("抱歉，您还未上传纸质发票图片",{time: 1400});
-			return;
-		}
-		var confirm = layer.confirm('是否确认上传纸票信息？', {
-            btn: ['确认','取消']  //按钮
-        }, function(){
-//					     	var param = checkUploadParam();    // +括号参数
-//								uploadRequest(param);                      // 图片上传
-    			$('#submit').click();
-    			layer.close(confirm);
-      });
+	  if(!checkUploadParam()){
+	     return;
+	  }           
+	  if(uploadPaperInvoiceFile.val() == ""){
+             layer.msg("抱歉，您还未上传纸质发票图片",{time: 1400});
+	     return;
+	  }
+	  var confirm = layer.confirm('是否确认上传纸票信息？', {
+             btn: ['确认','取消']  //按钮
+          }, function(){
+//	     	var param = checkUploadParam();    // +括号参数
+//		uploadRequest(param);                      // 图片上传
+    		$('#submit').click();
+    		layer.close(confirm);
+          });
 		
 	});						
 	
 	uploadPaperInvoiceFileBtn.on('click',function(){
-		uploadPaperInvoiceFile.click();
+	   uploadPaperInvoiceFile.click();
 	});
 	
 	function cleanUploadPaper(){
-		uploadPaperInvoiceTxt.val("");
-		$('#fileForm')[0].reset(); 
-		$('#imgDisplay').attr('src','');
-		uploadPaperInvoiceDisplay.hide();
-		uploadPaperInvoice.removeClass('open');
+	   uploadPaperInvoiceTxt.val("");
+	   $('#fileForm')[0].reset(); 
+	   $('#imgDisplay').attr('src','');
+	   uploadPaperInvoiceDisplay.hide();
+	   uploadPaperInvoice.removeClass('open');
 	}
 	
 	uploadPaperInvoicePanel.on('click',function(e){
-		var curr = $(this);
-		if(e.target.className != "closePanel" && e.target.className != "uploadPaperInvoicePanel"){
-			return;
-		}
-		curr.hide();
-		cleanUploadPaper();
+	   var curr = $(this);
+	   if(e.target.className != "closePanel" && e.target.className != "uploadPaperInvoicePanel"){
+	     return;
+	   }
+	   curr.hide();
+	   cleanUploadPaper();
 	});
 
