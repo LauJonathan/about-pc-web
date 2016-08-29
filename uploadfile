@@ -68,20 +68,22 @@ var fileIframe = document.getElementById('fileIframe');
 	uploadPaperInvoiceFile.on('change',function(){
 		var upfile = $(this).val();				
 		if(!upfile){
-			return;
+		  return;
 		}
 		var upfileName = upfile.substring(upfile.lastIndexOf('\\',upfile.length - 1) + 1);
 		if(upfileName.indexOf('.') != -1){
-			if(upfileName.substring(upfileName.lastIndexOf('.') + 1) == "png" || upfileName.substring(upfileName.lastIndexOf('.') + 1) == "jpg"){
-				uploadPaperInvoiceTxt.val(upfileName);
-				getFullPath();  //获取全路径
-				uploadPaperInvoiceDisplay.show();
-				uploadPaperInvoice.addClass('open');
-			}else{
-				layer.alert("抱歉，仅允许上传图片格式文件");
-			}
+		  if(upfileName.substring(upfileName.lastIndexOf('.') + 1) == "png" || upfileName.substring(upfileName.lastIndexOf('.') + 1) == "jpg"){
+		    uploadPaperInvoiceTxt.val(upfileName);
+		    getFullPath();  //获取全路径
+		    uploadPaperInvoiceDisplay.show();
+		    uploadPaperInvoice.addClass('open');
+	          }else{
+		    layer.alert("抱歉，仅允许上传图片格式文件");
+		    $('#fileForm')[0].reset(); 
+		  }
 		}else{
-			layer.alert("抱歉，仅允许上传图片格式文件");
+		  layer.alert("抱歉，仅允许上传图片格式文件");
+		  $('#fileForm')[0].reset();
 		}
 	});
 	
