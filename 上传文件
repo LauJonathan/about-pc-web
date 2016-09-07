@@ -1,0 +1,15 @@
+1.获取pc本地上传文件大小
+var imgSize = $(this)[0].files[0].size;   //ie10+写法
+判断
+if(Boolean(window.FormData)){ // 判断是ie10 ,才判断，目前没有找到9-取法
+  var imgSize = $(this)[0].files[0].size; 
+}
+2.兼容上传：
+  formData ie10+  
+  iframe 9-
+  (iframe返回响应数据要注意为string类型，如果为json对象，ie响应后会下载)
+
+FromData ie10+,需要解决跨域问题，手机支持，有进度，可用ajax直接将new FormData发送
+iframe上传文件，解决跨域，上传兼容好，但是没有进度
+
+注：ajax会自动处理响应的json对象，不会出现在ie下时响应成下载文件
