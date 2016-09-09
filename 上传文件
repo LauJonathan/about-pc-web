@@ -16,3 +16,14 @@ iframe上传文件，解决跨域，上传兼容好，但是没有进度
 
 图片预览：window.FileReader判断，不支持Safari6.0以下浏览器的图片预览
 参考blog http://blog.csdn.net/yu_han_23/article/details/13018619
+
+Safari
+文件上传display为none,input file所以点不到弹出的文件选择（部分浏览器如：safari安全机制,因隐藏而点不到file）
+解决，设置宽高为0，input为不可见或透明
+form{display: block;height: 0;width: 0;opacity: 0} 
+.uploadPaperInvoiceFile{display: inline-block;width: 0px;height: 0px;position: absolute;top: 0px;visibility: hidden;}
+
+// 需要自定义画按钮，间接点击，真实file不display:none,可以透明
+uploadPaperInvoiceBtn.on('click',function(){
+  uploadPaperInvoiceFile.click();
+});
