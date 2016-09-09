@@ -13,3 +13,6 @@ FromData ie10+,需要解决跨域问题，手机支持，有进度，可用ajax�
 iframe上传文件，解决跨域，上传兼容好，但是没有进度
 
 注：ajax会自动处理响应的json对象，不会出现在ie下时响应成下载文件
+
+图片预览：window.FileReader判断，不支持Safari6.0以下浏览器的图片预览
+参考blog http://blog.csdn.net/yu_han_23/article/details/13018619
