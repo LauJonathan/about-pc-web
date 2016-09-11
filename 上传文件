@@ -27,3 +27,5 @@ form{display: block;height: 0;width: 0;opacity: 0}
 uploadPaperInvoiceBtn.on('click',function(){
   uploadPaperInvoiceFile.click();
 });
+
+iframe上传文件响应接收，返回应为string类型(不应为json对象)，否则ie会出现保存文件提示框
