@@ -29,3 +29,5 @@ uploadPaperInvoiceBtn.on('click',function(){
 });
 
 iframe上传文件响应接收，返回应为string类型(不应为json对象)，否则ie会出现保存文件提示框
+
+可通过jquery.uploadify解决
